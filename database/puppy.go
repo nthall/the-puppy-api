@@ -60,3 +60,20 @@ func AddPuppy(puppy *Puppy) {
 		log.Printf("database.AddPuppy: %v", err)
 	}
 }
+
+func GetBreedList() *List {
+  // Just get the list of distinct breeds.
+  rows, err := db.Query(`SELECT DISTINCT breed FROM public.thepuppyapi_puppies`, "%"+strings.ToLower(breed)+"%", "%"+strings.ToLower(imageType)+"%")
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  // Extract results
+  var resultImageUrl string
+  var resultImageType string
+  var resultBreed string
+  for rows.Next() {
+    err = rows.Scan(&resultImageUrl, &resultImageType, &resultBreed)
+  }
+  return &Puppy{ImageUrl: resultImageUrl, ImageType: resultImageType, Breed: resultBreed}
+}

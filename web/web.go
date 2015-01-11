@@ -67,6 +67,20 @@ func Puppy(res http.ResponseWriter, req *http.Request) {
 	res.Write(data)
 }
 
+func Breeds(res http.ResponseWriter, req *http.Request) {
+  breeds := database.GetBreedList()
+
+	// Return JSON
+	response := map[string]string{"puppy_url": randomPuppy.ImageUrl}
+	data, err := json.Marshal(response)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	res.Header().Set("Content-Type", "application/json; charset=utf-8")
+	res.Write(data)
+}
+
 func main() {
 	// Set up database connection
 	log.Println("Setting up DB...")
@@ -75,6 +89,7 @@ func main() {
 	// Set up URL routes
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/puppy", Puppy)
+  http.HandleFunc("/breeds", Breeds)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 
 	// Start the server
